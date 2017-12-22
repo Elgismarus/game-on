@@ -24,9 +24,9 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "mocha \"./*/*.spec.js\"",
-    "coverage": "nyc report",
+    "test": "nyc mocha \"./*/*.spec.js\"",
     "dev": "nodemon index.js",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov ./node_modules/.bin/codecov"
+    "check-coverage": "nyc check-coverage --statements 80 --branches 80 --functions 80 --lines 80 ",
+    "report-coverage": "nyc report --reporter=lcovcode | cov"
   }
 }
