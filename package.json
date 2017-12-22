@@ -27,6 +27,6 @@
     "test": "mocha \"./*/*.spec.js\"",
     "coverage": "nyc report",
     "dev": "nodemon index.js",
-    "report-coverage": "nyc report --reporter=lcov | codecov"
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov ./node_modules/.bin/codecov"
   }
 }
