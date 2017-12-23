@@ -9,6 +9,7 @@ const PORT = 3000;
 // Dependencies
 const chai = require('chai');
 const Browser = require('zombie');
+const Helpers = require('./helpers');
 
 // Utils
 const expect = chai.expect;
@@ -27,12 +28,7 @@ describe('Foosball Notifier Test Suite',() =>{
 	// });
 	
 	before('Query Foosball Notifier page', (done) =>{
-		browser.visit('/')
-		.then(() =>{
-			expect(browser.status).to.eq(200);
-			expect(browser.success).to.be.true;
-			done();
-		}).catch(done);
+		Helpers.visitAndValidate(browser,'/', done);
 	});
 
 	after('Close browser', ()=>{
@@ -57,7 +53,7 @@ describe('Foosball Notifier Test Suite',() =>{
 					expect(messages.length).to.eq(1);
 					expect(messages[0]).to.contains('New player join');
 					done();	
-				}, 5);
+				}, 10);
 			}).catch(done);
 		});
 	});

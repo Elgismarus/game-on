@@ -10,6 +10,7 @@ const PORT = 3000;
 const chai = require('chai');
 const assert = require('assert');
 const Browser = require('zombie');
+const Helpers = require('./helpers');
 
 // Utils
 const expect = chai.expect;
@@ -28,12 +29,7 @@ describe('Foosball Notifier Test Suite',() =>{
 	// });
 	
 	before('Query Foosball Notifier page', (done) =>{
-		browser.visit('/')
-		.then(() =>{
-			expect(browser.status).to.eq(200);
-			expect(browser.success).to.be.true;
-			done();
-		}).catch(done);
+		Helpers.visitAndValidate(browser,'/', done);
 	});
 
 	after('Close browser', ()=>{
