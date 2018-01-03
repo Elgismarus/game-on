@@ -1,35 +1,48 @@
 // Tests/Functional/chat.spec.js
-
 // Test home page
+
 'use strict';
+
 // Set up environment
 process.env.NODE_ENV = 'test';
-const PORT = 3000;
 
 // Dependencies
 const chai = require('chai');
 const assert = require('assert');
 const Browser = require('zombie');
 const Helpers = require('./helpers');
+const Path = require('path');
+const fork = require("child_process").fork;
+
+// Constances
+const INDEX_PATH = Path.resolve(__dirname,'../../index.js');
+const PORT = 5000;
+const URL = 'http://localhost:' + PORT;
 
 // Utils
 const expect = chai.expect;
-Browser.localhost('localhost', PORT);
 
 describe('Foosball Notifier Test Suite',() =>{
 
 	var browser = new Browser();
+	var child;
+	before('Setting up server', (done) => {
+		process.env.PORT = PORT;
+		child = fork(INDEX_PATH);
+		child.on('message', function (msg) {
+			if (msg === 'listening') {
+				done();
+			}
+		});
+	});
 
-	// before('Start server', () =>{
-	// 	this.server = require('../../index.js');
-	// });
-
-	// after('Shutdown server', (done) =>{
-	// 	this.server.close(done);
-	// });
+	after("Kill process",() => {
+		delete process.env.PORT;
+		child.kill();
+	});
 	
 	before('Query Foosball Notifier page', (done) =>{
-		Helpers.visitAndValidate(browser,'/', done);
+		Helpers.visitAndValidate(browser,URL + '/', done);
 	});
 
 	after('Close browser', ()=>{

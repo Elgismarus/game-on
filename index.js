@@ -4,6 +4,8 @@
 var express = require("express");
 var path = require("path");
 
+const PORT = process.env.PORT || 3000;
+
 var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
@@ -11,9 +13,10 @@ var io = require("socket.io")(http);
 const Table = require('./Table/index');
 const Player = require('./Player/index');
 
+
 function log(msg){
 	// If module has parent, testing
-	if(!module.parent){
+	if(process.env.NODE_ENV !== 'test'){
 		console.log(msg);
 	}
 }
@@ -86,7 +89,10 @@ io.on("connection", function (socket)
 
 var table = new Table();
 
-http.listen(3000, function () 
+http.listen(PORT, function () 
 {
-	log("listening on *: 3000");
+	log("listening on *: " + PORT);
+	if(process.send){
+		process.send('listening');
+	}
 });
