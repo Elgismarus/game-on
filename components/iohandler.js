@@ -16,7 +16,6 @@ module.exports = function(server, table){
 	//Event handlers
 	io.on("connection", function (socket) 
 	{
-
 		log("Connected. ID: " + socket.id);
 		io.emit("drawTable",table.players);
 
@@ -35,7 +34,7 @@ module.exports = function(server, table){
 			log("chat msg sent.");
 			
 		});
-		
+
 		socket.on("clearTable", function () 
 		{
 			log("Clear sent by: " + socket.id);
@@ -55,6 +54,7 @@ module.exports = function(server, table){
 				log("Full table sent to " + socket.id);
 				return;
 			}
+
 			table.addPlayer(new Player(data[0].name,socket.id));
 			log("Player added. Sending Update Table event");
 			io.emit("updateTable",table.players);
@@ -63,7 +63,7 @@ module.exports = function(server, table){
 			{	
 				log("Broadcast new table event");
 				socket.broadcast.emit('startTable');
-				log("sent.");
+				log("New table event sent.");
 				return;
 			}
 		});
