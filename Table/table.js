@@ -3,6 +3,12 @@
 // Generate a table object
 'use strict';
 
+/**
+* Module Dependencies
+* @private
+*/
+const log = require('../utils').log;
+
 // Construtor
 function Table() {
     this.players = [];
@@ -20,9 +26,7 @@ Table.prototype.addPlayer = function(player){
 
 // Log player
 Table.prototype.logPlayers = function(){
-    if(process.env.NODE_ENV !== 'test'){
-        console.log("Table Players: \n");
-    }
+    log("Table Players: \n");
     for(var i = 0; i < this.players.length; i++){
         this.players[i].log();
     }
@@ -30,9 +34,7 @@ Table.prototype.logPlayers = function(){
 
 // Clear players list
 Table.prototype.clear = function(){
-    if(process.env.NODE_ENV !== 'test'){
-        console.log("Clearing table with Players: \n" + this.logPlayers());
-    }
+    log("Clearing table with Players: \n" + this.logPlayers());
     this.players = new Array();
     this.full = false;
 }

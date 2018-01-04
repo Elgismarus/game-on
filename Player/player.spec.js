@@ -9,10 +9,20 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonchai = require('sinon-chai');
+const proxyquire = require('proxyquire');
 
 // Utils
 const expect = chai.expect;
 chai.use(sinonchai);
+
+var logs = [];
+proxyquire('./player', {
+	'../utils': {
+		log: function(msg){
+			logs.push(msg);
+		}
+	}
+});
 
 // Unit tested
 const Player = require('./player');
@@ -58,22 +68,20 @@ describe('Given user want to set clientId to player',() =>{
 
 describe('Given user want to log player',() =>{
 	
-	beforeEach('Spy console log', () =>{
-		sinon.spy(console, 'log');
-	});
-
-	afterEach('Clean spy', () =>{
-		console.log.restore();
+	after('Clear logs', () =>{
+		logs = [];
 	});
 
 	it('should have log method', () => {
 		expect((new Player()).log).is.not.undefined;
 	});
 
-	it('should have call console.log', () =>{
+	it('should display log', () =>{
 		var playername = 'PlayerTest';
-		var playerId = 'Id';
-		(new Player(playername, playerId)).log();
-		expect(console.log).to.be.called;
+		var clientId = 'Id';
+		(new Player(playername, clientId)).log();
+		expect(logs).to.have.lengthOf(1);
+		expect(logs[0]).to.eq(
+			"\tPlayer name: " + playername + ", id: " + clientId + "\n");
 	});
 });

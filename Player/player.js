@@ -1,6 +1,13 @@
 // Player/player.js
 
 'use strict';
+
+/**
+* Module dependencies
+* @private
+*/
+const log = require('../utils').log;
+
 // Player Object
 function Player(name, clientId) 
 {
@@ -10,7 +17,7 @@ function Player(name, clientId)
 
 // Generate log
 Player.prototype.log = function(){
-	console.log("\tPlayer name: " + this.name + ", id: " + this.clientId + "\n");
+	log("\tPlayer name: " + this.name + ", id: " + this.clientId + "\n");
 }
 
 // Export

@@ -1,26 +1,29 @@
 'use strict';
 
-// Dependencies
-var express = require("express");
-var path = require("path");
+/**
+* Dependencies
+* @private
+*/
+const express = require("express");
+const path = require("path");
+const log = require('./utils').log;
+const iohandler = require('./components/iohandler');
+const Table = require('./Table/index');
 
+/**
+* Constances
+* @private
+*/
 const PORT = process.env.PORT || 3000;
 
+/**
+* Init variable
+* @private
+*/
 var app = express();
 var http = require("http").Server(app);
-var io = require("socket.io")(http);
-
-const Table = require('./Table/index');
-const Player = require('./Player/index');
-
-
-function log(msg){
-	// If module has parent, testing
-	if(process.env.NODE_ENV !== 'test'){
-		console.log(msg);
-	}
-}
-log("App started");
+var table = new Table();
+var io = iohandler(http, table);
 
 //Routing
 app.use(express.static(path.join(__dirname, "public")));
@@ -31,68 +34,20 @@ app.get("/", function (req, res)
 	res.sendFile(__dirname + "/index.html");
 });
 
-//Event handlers
-io.on("connection", function (socket) 
-{
-
-	log("Connected. ID: " + socket.id);
-	io.emit("drawTable",table.players);
-
-	socket.on("disconnect", function () 
-	{
-		log("Disconnected ID: " + socket.id);
-	});
-
-	socket.on("chat", function (msg) 
-	{
-		log("message: " + msg);
-
-		//FUTURE: Persistent names - Check cookie for name using socket.request
-		
-		io.emit("chat", msg);
-		log("chat msg sent.");
-		
-	});
-	
-	socket.on("clearTable", function () 
-	{
-		log("Clear sent by: " + socket.id);
-		table.clear();
-		io.emit("updateTable",table.players);
-		log("update table sent");
-	});
-	
-	socket.on("addPlayer", function (data) 
-	{
-		log("Add received from: " + socket.id + ". Data: " + JSON.stringify(data));
-		
-		if(table.full)
-		{
-			log("Table is full");
-			io.sockets.connected[socket.id].emit("fullTable");
-			log("Full table sent to " + socket.id);
-			return;
-		}
-		table.addPlayer(new Player(data[0].name,socket.id));
-		log("Player added. Sending Update Table event");
-		io.emit("updateTable",table.players);
-		
-		if (table.getLength() == 1 )
-		{	
-			log("Broadcast new table event");
-			socket.broadcast.emit('startTable');
-			log("sent.");
-			return;
-		}
-	});
-});
-
-var table = new Table();
-
 http.listen(PORT, function () 
 {
+	log("App started");
 	log("listening on *: " + PORT);
 	if(process.send){
 		process.send('listening');
 	}
-});
+});	
+
+
+/**
+* If call from another module
+* e.g.: Test module
+*/
+if(module.parent){
+	module.exports.server = http;
+}

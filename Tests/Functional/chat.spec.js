@@ -22,7 +22,7 @@ const URL = 'http://localhost:' + PORT;
 // Utils
 const expect = chai.expect;
 
-describe('Foosball Notifier Test Suite',() =>{
+describe('Chat Test Suite',() =>{
 
 	var browser = new Browser();
 	var child;
@@ -72,7 +72,7 @@ describe('Foosball Notifier Test Suite',() =>{
 					expect(messages.length).to.eq(1);
 					expect(messages[0]).to.contains(testMessage);
 					done();
-				}, 5);
+				}, 10);
 			}).catch(done);
 		});
 

@@ -49,9 +49,9 @@ describe('Given user add player',() =>{
 	beforeEach('Init players',() =>{
 		players = [];
 		for(var i = 0; i < 4; i++){
-			players[i] = {
+			players.push({
 				name: 'Player' + i
-			};
+			});
 		}
 	});
 
@@ -111,11 +111,11 @@ describe('Given table created',() =>{
 		players = [];
 		foosballTable = new Table();
 		for(var i = 0; i < 4; i++){
-			players[i] = {
+			players.push({
 				name: 'Player' + i,
 				log: sinon.spy()
-			};
-
+			});
+			
 			foosballTable.addPlayer(players[i]); 
 		}
 		expect(foosballTable.full).to.be.true;
@@ -141,10 +141,10 @@ describe('Given user wish to empty table',() =>{
 		players = [];
 		foosballTable = new Table();
 		for(var i = 0; i < 4; i++){
-			players[i] = {
-				name: 'Player' + i
-			};
-
+			players.push({
+				name: 'Player' + i,
+				log: sinon.spy()
+			});
 			foosballTable.addPlayer(players[i]); 
 		}
 		expect(foosballTable.full).to.be.true;
