@@ -1,5 +1,4 @@
-// Tests/Functional/chat.spec.js
-
+/*jshint expr: true*/
 // Test home page
 'use strict';
 
@@ -10,64 +9,64 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const Browser = require('zombie');
 const Helpers = require('./helpers');
-const fork = require('child_process').fork;
-const Path = require('path');
-
-// Constances
-const PORT = 5001;
-const INDEX_PATH = Path.resolve(__dirname,'../../index.js');
-const URL = 'http://localhost:' + PORT;
+const TestServer = require('./testserver');
 
 // Utils
 const expect = chai.expect;
 
-describe('Foosball Notifier Test Suite',() =>{
+describe('Foosball Notifier Test Suite', () => {
 
 	var browser = new Browser();
 
-	var child;
+	let server, url, port;
+
 	before('Setting up server', (done) => {
-		process.env.PORT = PORT;
-		child = fork(INDEX_PATH);
-		child.on('message', function (msg) {
-			if (msg === 'listening') {
-				done();
-			}
+
+		TestServer.run().then(testserver => {
+			port = testserver.address().port;
+			url = 'http://localhost:' + port;
+			server = testserver;
+			done();
+		}).catch(err => {
+			done(err);
 		});
 	});
 
-	after("Kill process",() => {
-		delete process.env.PORT;
-		child.kill();
-	});
-	
-	before('Query Foosball Notifier page', (done) =>{
-		Helpers.visitAndValidate(browser,URL + '/', done);
+	after("Turn off test server", () => {
+		server.close();
 	});
 
-	after('Close browser', ()=>{
-		browser.window.close()
+	before('Query Foosball Notifier page', (done) => {
+		Helpers.visitAndValidate(browser, url + '/', done);
 	});
 
-	describe('When registering for a game',() =>{
+	after('Close browser', (done) => {
+		try {
+			browser.window.close();
+			done();
+		} catch (e) {
+			done(e);
+		}
+	});
 
-		it('should notify in chat user joined', (done) =>{
-			
+	describe('When registering for a game', () => {
+
+		it('should notify in chat user joined', (done) => {
+
 			expect(browser.query('#messages')).is.not.undefined;
-
 			browser
-			.fill('name', 'Frank')
-			.pressButton('Notify me!')
-			.then(() =>{
-				// TODO: Better way to collect messages?
-				// Timeout to wait for message to populate
-				setTimeout(() =>{
-					var messages = browser.text('#messages').split("\n");
-					expect(messages.length).to.eq(1);
-					expect(messages[0]).to.contains('New player join');
-					done();	
-				}, 10);
-			}).catch(done);
+				.fill('name', 'Frank')
+				.pressButton('Notify me!')
+				.then(() => {
+					// TODO: Better way to collect messages?
+					// Timeout to wait for message to populate
+					setTimeout(() => {
+						var messages = browser.text('#messages').split('\n');
+						expect(messages.length).to.eq(1);
+						expect(messages[0]).to.contains('New player join');
+						done();
+					}, 10);
+				}).catch(done);
 		});
 	});
 });

@@ -8,48 +8,49 @@ process.env.NODE_ENV = 'test';
 // Dependencies
 const chai = require('chai');
 const Browser = require('zombie');
-const fork = require('child_process').fork;
-const Path = require('path');
+const TestServer = require('./testserver');
+const Helpers = require('./helpers');
 
-// Constances
-const INDEX_PATH = Path.resolve(__dirname,'../../index.js');
-const PORT = 5002;
-const URL = 'http://localhost:'+PORT;
 // Utils
 const expect = chai.expect;
 
 // Test
-describe('Given user go to home page',() =>{
-	
-	var browser = new Browser();
+describe('Home Page Test suite', () => {
 
-	var child;
-	before('Setting up server', (done) => {
-		process.env.PORT = PORT;
-		child = fork(INDEX_PATH);
-		child.on('message', function (msg) {
-			if (msg === 'listening') {
+	describe('Given user go to home page', () => {
+
+		var browser = new Browser();
+
+		let server, url, port;
+
+		before('Setting up server', (done) => {
+
+			TestServer.run().then(testserver => {
+				port = testserver.address().port;
+				url = 'http://localhost:' + port;
+				server = testserver;
 				done();
-			}
+			}).catch(err => {
+				done(err);
+			});
+
 		});
-	});
 
-	after("Kill process",() => {
-		delete process.env.PORT;
-		child.kill();
-	});
-	
+		after("Turn off test server", () => {
+			server.close();
+		});
 
-	before('Visit page', (done) =>{
-		browser.visit(URL + '/', done);
-	});
+		before('Visit home page', (done) => {
+			Helpers.visitAndValidate(browser, url + '/', done);
+		});
 
-	after('Close browser', ()=>{
-		browser.window.close()
-	});
+		after('Close browser', () => {
+			browser.window.close();
+		});
 
-	it('should load the page', () => {
-		expect(browser.status).to.eq(200);
-		expect(browser.success).to.be.true;	
+		it('should load the page', () => {
+			expect(browser.status).to.eq(200);
+			expect(browser.success).to.be.true;
+		});
 	});
 });

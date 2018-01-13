@@ -8,16 +8,9 @@ process.env.NODE_ENV = 'test';
 
 // Dependencies
 const chai = require('chai');
-const assert = require('assert');
 const Browser = require('zombie');
 const Helpers = require('./helpers');
-const Path = require('path');
-const fork = require("child_process").fork;
-
-// Constances
-const INDEX_PATH = Path.resolve(__dirname,'../../index.js');
-const PORT = 5000;
-const URL = 'http://localhost:' + PORT;
+const TestServer = require('./testserver');
 
 // Utils
 const expect = chai.expect;
@@ -25,28 +18,31 @@ const expect = chai.expect;
 describe('Chat Test Suite',() =>{
 
 	var browser = new Browser();
-	var child;
+	let server, url, port;
+
 	before('Setting up server', (done) => {
-		process.env.PORT = PORT;
-		child = fork(INDEX_PATH);
-		child.on('message', function (msg) {
-			if (msg === 'listening') {
-				done();
-			}
+
+		TestServer.run().then(testserver =>{
+			port = testserver.address().port;
+			url = 'http://localhost:' + port;
+			server = testserver;
+			done();
+		}).catch(err =>{
+			done(err);
 		});
+
 	});
 
-	after("Kill process",() => {
-		delete process.env.PORT;
-		child.kill();
+	after("Turn off test server",() => {
+		server.close();
 	});
 	
 	before('Query Foosball Notifier page', (done) =>{
-		Helpers.visitAndValidate(browser,URL + '/', done);
+		Helpers.visitAndValidate(browser,url + '/', done);
 	});
 
 	after('Close browser', ()=>{
-		browser.window.close()
+		browser.window.close();
 	});
 
 	describe('When landing on the page',() =>{

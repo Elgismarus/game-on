@@ -1,5 +1,3 @@
-// Player/player.js
-
 'use strict';
 
 /**
@@ -17,8 +15,8 @@ function Player(name, clientId)
 
 // Generate log
 Player.prototype.log = function(){
-	log("\tPlayer name: " + this.name + ", id: " + this.clientId + "\n");
-}
+	log('\tPlayer name: ' + this.name + ', id: ' + this.clientId + '\n');
+};
 
 // Export
 module.exports = Player;
