@@ -21,15 +21,18 @@ describe('Foosball Notifier Test Suite', () => {
 	let server, url, port;
 
 	before('Setting up server', (done) => {
-
-		TestServer.run().then(testserver => {
-			port = testserver.address().port;
-			url = 'http://localhost:' + port;
-			server = testserver;
-			done();
-		}).catch(err => {
-			done(err);
-		});
+		try {
+			TestServer.run().then(testserver => {
+				port = testserver.address().port;
+				url = 'http://localhost:' + port;
+				server = testserver;
+				done();
+			}).catch(err => {
+				done(err);
+			});
+		} catch (e) {
+			done(e);
+		}
 	});
 
 	after("Turn off test server", () => {
