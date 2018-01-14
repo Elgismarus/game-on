@@ -16,6 +16,7 @@
     "chai": "^4.1.2",
     "chai-match": "^1.1.1",
     "codecov": "^3.0.0",
+    "coveralls": "^3.0.0",
     "jquery": "^3.2.1",
     "mocha": "^4.1.0",
     "mock-browser": "^0.92.14",
@@ -37,7 +38,7 @@
     "test:public": "nyc  mocha \"./public/js/*.spec.js\"",
     "dev": "nodemon index.js",
     "check-coverage": "nyc check-coverage --statements 80 --branches 80 --functions 80 --lines 80",
-    "report-coverage": "nyc report --reporter=lcov && codecov"
+    "report-coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "nyc": {
     "exclude": [
