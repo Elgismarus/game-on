@@ -53,6 +53,9 @@ describe('Index unit test', () => {
 	describe('Start and shutdown', () => {
 
 		it('should shutdown', (done) => {
+			if(process.env.PORT !== undefined){
+				delete process.env.PORT;
+			}
 			(() => {
 				var app = loadTestModule();
 				app.server.close(done);
@@ -81,25 +84,6 @@ describe('Index unit test', () => {
 				delete process.env.PORT;
 
 			}
-		});
-	});
-
-	describe('Running as a fork', () => {
-
-		it('should emit message process child', (done) => {
-
-			var timeout = setTimeout(() => {
-				appfork.kill();
-				done(new Error('Message not received before 1000 ms.'));
-			}, 1000);
-
-			var appfork = fork(INDEX_PATH);
-			appfork.on('message', (msg) => {
-				expect(msg).to.eq('listening');
-				clearTimeout(timeout);
-				appfork.kill();
-				done();
-			});
 		});
 	});
 

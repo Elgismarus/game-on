@@ -36,11 +36,6 @@ app.get("/", function(req, res) {
 http.listen(PORT, function() {
 	log("App started");
 	log("listening on *: " + PORT);
-	if (process.send) {
-		process.send('listening');
-	} else {
-		log('Running under own process.');
-	}
 });
 
 
