@@ -41,11 +41,11 @@ function getWindow() {
 }
 
 function createVMContext(o_module, o_window, str_module_path, callback) {
-	o_window.VM_Loaded = function(){
-		callback();
-	}
+	o_window.$(o_window.document)
+		.ready(function VMLoaded() {
+			callback();
+		});
 	let winctx = VM.createContext(o_window);
-	o_module += '$(function(){VM_Loaded()});';	
 	VM.runInContext(o_module, winctx, str_module_path);
 	return winctx;
 }
@@ -142,7 +142,7 @@ describe('Global.js Unit Tests', () => {
 		it('should raise alert if notification not available', (done) => {
 
 			let ctx_without_Notification;
-			let test_handler = function test_handler(){
+			let test_handler = function test_handler() {
 				killer.cancel();
 				// Ensure notification is removed
 				assert.isUndefined(ctx_without_Notification.Notification);
@@ -415,7 +415,7 @@ describe('Global.js Unit Tests', () => {
 
 			win.document.body.appendChild(chatform);
 			ctx = createVMContext(MODULE_TESTED, win, MODULE_PATH, done);
-		
+
 		});
 
 		afterEach('Clean form', () => {
@@ -440,7 +440,7 @@ describe('Global.js Unit Tests', () => {
 			assert.isUndefined(chatform.onsubmit);
 
 			let spy = sinonbox.spy(server.socketClient, 'emit');
-			let test_handler = function(){
+			let test_handler = function() {
 				killer.cancel();
 				ctx.$(chatform).off('submit', test_handler);
 				spy.should.have.been.called;
@@ -448,7 +448,7 @@ describe('Global.js Unit Tests', () => {
 				done();
 			};
 			ctx.$(chatform).on('submit', test_handler);
-			
+
 			killer.startWith(done);
 			ctx.$(chatform).trigger('submit');
 
@@ -709,11 +709,11 @@ describe('Global.js Unit Tests', () => {
 			let button = win.document.createElement('button');
 			button.id = 'clearTable';
 			win.document.body.appendChild(button);
-			
+
 			win.alert = sinonbox.spy();
 			win.console = console;
 			ctx = createVMContext(MODULE_TESTED, win, MODULE_PATH, done);
-			
+
 		});
 
 		it('should have been hook to event', (done) => {
@@ -755,7 +755,7 @@ describe('Global.js Unit Tests', () => {
 			button = ctx.document.createElement('button');
 			button.id = 'addPlayer';
 			ctx.document.body.appendChild(button);
-			
+
 		});
 
 		beforeEach('Reset sinon', () => {
@@ -763,7 +763,7 @@ describe('Global.js Unit Tests', () => {
 			sinonbox.restore();
 		});
 
-		afterEach('Clean field name', () =>{
+		afterEach('Clean field name', () => {
 			ctx.document.getElementById('name').value = '';
 		});
 

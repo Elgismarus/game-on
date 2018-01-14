@@ -74,15 +74,28 @@ module.exports.run = function() {
 	context.module.exports = context;
 	return new Promise((resolve, reject) => {
 		try {
+			VM.runInContext(Server_code, context, INDEX_PATH);
+			
 			/**
-			 * Add ending script to allow
-			 * callback once script done
+			 * Create loop to wait for server
+			 * running. If server undefined
+			 * after max_attempt, consider 
+			 * failing.
 			 */
-			let codeToRun = Server_code + '(function(){VM_Loaded()})();';
-			context.VM_Loaded = function() {
-				resolve(context.server);
-			};
-			VM.runInContext(codeToRun, context, INDEX_PATH);
+			let awaitLoaded;
+			let counter, max_attempt = 10;
+
+			awaitLoaded = setInterval(function awaitScript(){
+				if(context.server !== undefined){
+					clearInterval(awaitLoaded);
+					resolve(context.server);
+				}else{
+					counter++;
+				}
+				if(counter > max_attempt){
+					reject(new Error('Unable to retrieve server.'));
+				}
+			},2);
 		} catch (e) {
 			reject(e);
 		}
