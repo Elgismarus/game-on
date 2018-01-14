@@ -36,7 +36,7 @@ function mockifyCanvas(canvas) {
 			},
 			putImageData: function() {},
 			createImageData: function() {
-				return []
+				return [];
 			},
 			setTransform: function() {},
 			drawImage: function() {},
@@ -57,10 +57,10 @@ function mockifyCanvas(canvas) {
 			createLinearGradient: function() {
 				return {
 					addColorStop: function() {}
-				}
+				};
 			}
 		};
-	}
+	};
 }
 module.exports = {
 	mockifyCanvas: mockifyCanvas,

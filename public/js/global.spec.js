@@ -28,7 +28,7 @@ const TableEventType = SharedEnum.TableEventType;
  * Utils
  */
 Chai.use(SinonChai);
-const should = Chai.should();
+Chai.should();
 const assert = Chai.assert;
 
 function getWindow() {
@@ -108,7 +108,6 @@ describe('Global.js Unit Tests', () => {
 			ctx = createVMContext(MODULE_TESTED, win, MODULE_PATH, done);
 		});
 
-		let mockNotification;
 		before('Set up notification', () => {
 			ctx.Notification = sinonbox.mock();
 			ctx.Notification.permission = PermissionType.DEFAULT;
@@ -121,11 +120,9 @@ describe('Global.js Unit Tests', () => {
 			Object.defineProperty(stubInstance,
 				'onclick', {
 					get: function() {
-						return ''
+						return '';
 					},
-					set: function(fn) {
-
-					},
+					set: function() {},
 					configurable: true
 				});
 			assert.isDefined(stubInstance.onclick);
@@ -149,7 +146,7 @@ describe('Global.js Unit Tests', () => {
 				assert.isFalse(ctx_without_Notification.notifyMe(), 'Has been notified?');
 				ctx_without_Notification.alert.should.have.been.calledOnce;
 				done();
-			}
+			};
 			// Create new context without notification
 			let win = getWindow();
 			win.alert = sinonbox.spy();
@@ -351,7 +348,7 @@ describe('Global.js Unit Tests', () => {
 
 			let ctx2D = canvas.getContext();
 			let stub = sinonbox.stub(canvas, 'getContext');
-			stub.returns(ctx2D)
+			stub.returns(ctx2D);
 
 			let spyStrokeText = sinonbox.spy(ctx2D, 'strokeText');
 
@@ -361,7 +358,7 @@ describe('Global.js Unit Tests', () => {
 				[40, 300],
 				[440, 300]
 			]
-			.forEach((topleft, idx, array) => {
+			.forEach((topleft, idx) => {
 				spyStrokeText.resetHistory();
 				let playername = 'Tester' + idx;
 				ctx.addPlayerCanvas(playername, idx + 1);
@@ -374,7 +371,7 @@ describe('Global.js Unit Tests', () => {
 		it('should throw error if wrong data provided', () => {
 			let ctx2D = canvas.getContext();
 			let stub = sinonbox.stub(canvas, 'getContext');
-			stub.returns(ctx2D)
+			stub.returns(ctx2D);
 
 			let spyStrokeText = sinonbox.spy(ctx2D, 'strokeText');
 

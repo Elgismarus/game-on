@@ -1,5 +1,6 @@
 // utils.spec.js
 // Unit test for utilities
+"use strict";
 
 /**
 * Test dependencies

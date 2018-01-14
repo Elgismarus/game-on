@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - "9.3.0"
+before_script:
+  - npm run code:analysis
 script:
   - npm test
   - npm run coverage:check
