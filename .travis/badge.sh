@@ -1,6 +1,3 @@
-# TODO: DELETE THIS
-TRAVIS_BRANCH="build"
-
 # Script to update the badge in README.md
 update_badge(){
 
@@ -26,8 +23,7 @@ upload_repo(){
 
 	git clone git://${GITHUB_REPO}
 	cd ${REPO}
-	git remote
-	
+
 }
 
 push_and_commit(){
@@ -49,5 +45,7 @@ if [ "$GAMEON_FILE_BRANCH" == "$TRAVIS_BRANCH" ]; then
 	exit 0
 else
 	echo "Update require for README.md required."
+	upload_repo
 	update_badge
+	push_and_commit
 fi
