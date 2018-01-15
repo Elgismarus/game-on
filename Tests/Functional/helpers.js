@@ -4,7 +4,7 @@
 
 // Dependencies
 const chai = require('chai');
-
+const sinon = require('sinon');
 // Utils
 var expect = chai.expect;
 
@@ -25,6 +25,10 @@ var expect = chai.expect;
  */
 function mockifyCanvas(canvas) {
 
+	sinon.stub(canvas, 'tagName').get(function(){
+		return 'CANVAS';
+	});
+	
 	canvas.getContext = function() {
 		return {
 			fillRect: function() {},

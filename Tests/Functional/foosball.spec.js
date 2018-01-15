@@ -72,4 +72,6 @@ describe('Foosball Notifier Test Suite', () => {
 				}).catch(done);
 		});
 	});
+
+	//TODO: Create test for clear table
 });
