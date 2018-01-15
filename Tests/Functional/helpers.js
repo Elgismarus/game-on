@@ -25,10 +25,10 @@ var expect = chai.expect;
  */
 function mockifyCanvas(canvas) {
 
-	sinon.stub(canvas, 'tagName').get(function(){
+	sinon.stub(canvas, 'tagName').get(function() {
 		return 'CANVAS';
 	});
-	
+
 	canvas.getContext = function() {
 		return {
 			fillRect: function() {},
@@ -76,9 +76,15 @@ module.exports = {
 				browser.wait({
 					element: '#canvas1'
 				}).then(() => {
-					// Need to mock canvas as zombie.js aka jsdom not supporting canvas
-					mockifyCanvas(browser.document.getElementById('canvas1'));
-					done();
+					/**
+					 * TODO: Investigate why timeout without
+					 * using a delay.
+					 */
+					setTimeout(() => {
+						// Need to mock canvas as zombie.js aka jsdom not supporting canvas
+						mockifyCanvas(browser.document.getElementById('canvas1'));
+						done();
+					}, 2);
 				});
 
 			}).catch(done);
