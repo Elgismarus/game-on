@@ -21,9 +21,7 @@ update_badge(){
 		echo "Changing link from ${link} to ${temp}"
 		sed -i "s,${link},${temp},g" $FILES 
 	done
-	echo "Displaying ${FILES}"
-	cat $FILES
-	echo 
+
 	echo "Badges link updated!"
 	echo "----------------------------------------------------------------------"
 	echo
@@ -34,9 +32,10 @@ commit_and_push(){
 	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 	git add $FILES
-	git commit -m "[ci skip] ${MESSAGE}"
-	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
-	git push origin $TRAVIS_BRANCH 
+	git branch
+#	git commit -m "[ci skip] ${MESSAGE}"
+#	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
+#	git push origin $TRAVIS_BRANCH 
 	echo "Commit and push done!"
 	echo "----------------------------------------------------------------------"
 	echo
