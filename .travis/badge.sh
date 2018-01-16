@@ -45,9 +45,7 @@ commit_and_push(){
 
 echo $PWD
 # Retrieve branch name from badge
-GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' ../README.md | awk -F'[=&]' '{print $2}')
-
-echo GAMEON_FILE_BRANCH
+GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' ../README.md | awk -F'[=&]' '{print $2}' || exit 1)
 
 # Compare branches
 if [ "$GAMEON_FILE_BRANCH" == "$TRAVIS_BRANCH" ]; then
