@@ -52,6 +52,7 @@ get_travis_info(){
 }
 
 echo "Get Travis info"
+get_travis_info
 
 # Retrieve branch name from badge
 GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' README.md | awk -F'[=&]' '{print $2}')
