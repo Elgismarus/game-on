@@ -27,24 +27,14 @@ update_badge(){
 	echo
 }
 
+# Commit and push change to the remote set
 commit_and_push(){
 	echo "-------------------------- COMMIT AND PUSH ---------------------------"
 	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
-	echo "Check status"
-	git status
-	echo "Add file"
 	git add $FILES
-	echo "Commit"
 	git commit -m "[ci skip] ${MESSAGE}"
-	echo "Echo origin"
-	git config --get remote.origin.url
-	echo "--------------"
-	echo "Set origin"
 	git remote add travispush "https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
-	echo "Echo origin"
-	git config --get remote.travispush.url
-	echo "--------------"
 	git push --set-upstream travispush HEAD:$TRAVIS_BRANCH 
 	echo "Commit and push done!"
 	echo "----------------------------------------------------------------------"
@@ -57,10 +47,10 @@ GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' README.md | awk -F'[=&]' '{print 
 
 # Compare branches
 if [ "$GAMEON_FILE_BRANCH" == "$TRAVIS_BRANCH" ]; then
-	echo "Same branch - Skipping badge update!"
+	echo "Branch name match - Skipping badges link update!"
 	exit 0
 else
-	echo "Update require for ${FILES} required."
+	echo "Badge link update required for ${FILES}."
 	update_badge
 	commit_and_push
 	exit 0
