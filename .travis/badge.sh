@@ -1,3 +1,8 @@
+# !/.travis/badge.sh
+
+# Exit script on error
+set -e
+
 # Script to update the badge in README.md
 update_badge(){
 
@@ -38,6 +43,7 @@ commit_and_push(){
 	echo "Commit and push done!"
 }
 
+echo $PWD
 # Retrieve branch name from badge
 GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' ../README.md | awk -F'[=&]' '{print $2}')
 
