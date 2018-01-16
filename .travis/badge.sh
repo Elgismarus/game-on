@@ -23,7 +23,7 @@ update_badge(){
 	done
 
 	echo "Badges link updated!"
-	echo "------------------------------------------------------------"
+	echo "------------------------------------------------------------\n"
 }
 
 commit_and_push(){
@@ -31,11 +31,11 @@ commit_and_push(){
 	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 	git add ${FILES}
-	git commit -m "[ci skip]" ${MESSAGE}
+	git commit -m "[ci skip] ${MESSAGE}"
 	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
 	git push --quiet --set-upstream origin $TRAVIS_BRANCH 
 	echo "Commit and push done!"
-	echo "------------------------------------------------------------"
+	echo "------------------------------------------------------------\n"
 }
 
 
