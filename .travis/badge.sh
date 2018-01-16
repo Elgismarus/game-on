@@ -47,6 +47,8 @@ echo $PWD
 # Retrieve branch name from badge
 GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' ../README.md | awk -F'[=&]' '{print $2}')
 
+echo GAMEON_FILE_BRANCH
+
 # Compare branches
 if [ "$GAMEON_FILE_BRANCH" == "$TRAVIS_BRANCH" ]; then
 	echo "Same branch - Skipping badge update!"
