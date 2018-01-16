@@ -31,11 +31,11 @@ commit_and_push(){
 	echo "-------------------------- COMMIT AND PUSH ---------------------------"
 	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
+	git checkout -b $TRAVIS_BRANCH
 	git add $FILES
-	git branch
-#	git commit -m "[ci skip] ${MESSAGE}"
-#	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
-#	git push origin $TRAVIS_BRANCH 
+	git commit -m "[ci skip] ${MESSAGE}"
+	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
+	git push origin $TRAVIS_BRANCH 
 	echo "Commit and push done!"
 	echo "----------------------------------------------------------------------"
 	echo
