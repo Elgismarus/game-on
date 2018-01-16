@@ -21,19 +21,21 @@ update_badge(){
 
 upload_repo(){
 
+	echo "Cloning repository..."
 	git clone git://${GITHUB_REPO}
 	cd ${REPO}
-
+	echo "Repository cloned!"
 }
 
-push_and_commit(){
+commit_and_push(){
 	
+	echo "Commit and pushing..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 	git add ${FILES}
 	git commit -m "[ci skip]" ${MESSAGE}
 	git remote add origin "https://${GITHUB_TOKEN}@${GITHUB_REPO}" > /dev/null 2>&1
 	git push --quiet --set-upstream origin TRAVIS_BRANCH 
-
+	echo "Commit and push done!"
 }
 
 # Retrieve branch name from badge
@@ -47,5 +49,5 @@ else
 	echo "Update require for README.md required."
 	upload_repo
 	update_badge
-	push_and_commit
+	commit_and_push
 fi
