@@ -31,9 +31,15 @@ commit_and_push(){
 	echo "-------------------------- COMMIT AND PUSH ---------------------------"
 	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
+	echo "Check status"
+	git status
+	echo "Add file"
 	git add $FILES
+	echo "Commit"
 	git commit -m "[ci skip] ${MESSAGE}"
-	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
+	echo "Set origin"
+	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" 
+	#> /dev/null 2>&1
 	echo "Echo origin"
 	git config --get remote.origin.url
 	echo "--------------"
