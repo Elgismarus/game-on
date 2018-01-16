@@ -41,9 +41,12 @@ commit_and_push(){
 	git config --get remote.origin.url
 	echo "--------------"
 	echo "Set origin"
-	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" 
+	git remote add travispush "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" 
 	#> /dev/null 2>&1
-	git push --set-upstream origin HEAD:$TRAVIS_BRANCH 
+	echo "Echo origin"
+	git config --get remote.travispush.url
+	echo "--------------"
+	git push --set-upstream travispush HEAD:$TRAVIS_BRANCH 
 	echo "Commit and push done!"
 	echo "----------------------------------------------------------------------"
 	echo
