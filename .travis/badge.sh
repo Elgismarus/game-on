@@ -19,9 +19,11 @@ update_badge(){
 		# Change branch link
 		temp=$(sed "s/branch=\(.*\)/branch=$TRAVIS_BRANCH/g" <<< $link)
 		echo "Changing link from ${link} to ${temp}"
-		sed -i "s,${link},${temp},g ${FILES}" 
+		sed -i "s,${link},${temp},g" $FILES 
 	done
-
+	echo "Displaying ${FILES}"
+	cat $FILES
+	echo 
 	echo "Badges link updated!"
 	echo "----------------------------------------------------------------------"
 	echo
