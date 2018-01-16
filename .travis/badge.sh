@@ -10,14 +10,14 @@ update_badge(){
 	echo "Attempting to update badges in README.md..."
 
 	# Get all the links
-	GAMEON_FILE_LINKS=$(grep https ../README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
+	GAMEON_FILE_LINKS=$(grep https README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
 
 	# Loop through the links
 	for link in $GAMEON_FILE_LINKS
 	do
 		# Change branch link
 		temp=$(sed "s/branch=\(.*\)/branch=$TRAVIS_BRANCH/g" <<< $link)
-		sed -i "s,${link},${temp},g" ../README.md
+		sed -i "s,${link},${temp},g" README.md
 	done
 
 	echo "Badges link updated!"
@@ -45,7 +45,7 @@ commit_and_push(){
 
 echo $PWD
 # Retrieve branch name from badge
-GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' ../README.md | awk -F'[=&]' '{print $2}') || exit 1
+GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' README.md | awk -F'[=&]' '{print $2}')
 
 # Compare branches
 if [ "$GAMEON_FILE_BRANCH" == "$TRAVIS_BRANCH" ]; then
