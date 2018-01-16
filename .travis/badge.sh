@@ -37,12 +37,12 @@ commit_and_push(){
 	git add $FILES
 	echo "Commit"
 	git commit -m "[ci skip] ${MESSAGE}"
-	echo "Set origin"
-	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" 
-	#> /dev/null 2>&1
 	echo "Echo origin"
 	git config --get remote.origin.url
 	echo "--------------"
+	echo "Set origin"
+	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" 
+	#> /dev/null 2>&1
 	git push --set-upstream origin HEAD:$TRAVIS_BRANCH 
 	echo "Commit and push done!"
 	echo "----------------------------------------------------------------------"
