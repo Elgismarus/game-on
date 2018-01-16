@@ -11,7 +11,7 @@ update_badge(){
 	echo $PWD
 	# Get all the links
 	GAMEON_FILE_LINKS=$(grep https README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
-
+	echo $GAMEON_FILE_LINKS
 	# Loop through the links
 	for link in $GAMEON_FILE_LINKS
 	do
