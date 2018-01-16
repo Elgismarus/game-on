@@ -11,12 +11,13 @@ update_badge(){
 
 	# Get all the links
 	GAMEON_FILE_LINKS=$(grep https README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
-	echo $GAMEON_FILE_LINKS
+
 	# Loop through the links
 	for link in $GAMEON_FILE_LINKS
 	do
 		# Change branch link
 		temp=$(sed "s/branch=\(.*\)/branch=$TRAVIS_BRANCH/g" <<< $link)
+		echo "Changing link from ${link} to ${temp}"
 		sed -i "s,${link},${temp},g" README.md
 	done
 
@@ -26,12 +27,12 @@ update_badge(){
 
 commit_and_push(){
 	
-	echo "Commit and pushing..."
+	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 	git add ${FILES}
 	git commit -m "[ci skip]" ${MESSAGE}
-	#git remote add origin "https://${GITHUB_TOKEN}@${GITHUB_REPO}" > /dev/null 2>&1
-	#git push --quiet --set-upstream origin $TRAVIS_BRANCH 
+	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
+	git push --quiet --set-upstream origin $TRAVIS_BRANCH 
 	echo "Commit and push done!"
 }
 
