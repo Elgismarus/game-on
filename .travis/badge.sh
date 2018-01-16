@@ -8,7 +8,7 @@ update_badge(){
 
 	# Should only be here if different branch
 	echo "Attempting to update badges in README.md..."
-
+	echo $PWD
 	# Get all the links
 	GAMEON_FILE_LINKS=$(grep https README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
 
@@ -28,6 +28,7 @@ upload_repo(){
 
 	echo "Cloning repository..."
 	git clone git://${GITHUB_REPO}
+	echo "cd into ${REPO}"
 	cd ${REPO}
 	echo "Repository cloned!"
 }
@@ -43,7 +44,6 @@ commit_and_push(){
 	echo "Commit and push done!"
 }
 
-echo $PWD
 # Retrieve branch name from badge
 GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' README.md | awk -F'[=&]' '{print $2}')
 
