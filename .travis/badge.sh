@@ -23,7 +23,8 @@ update_badge(){
 	done
 
 	echo "Badges link updated!"
-	printf "----------------------------------------------------------------------\n"
+	echo "----------------------------------------------------------------------"
+	echo
 }
 
 commit_and_push(){
@@ -35,7 +36,8 @@ commit_and_push(){
 	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
 	git push origin $TRAVIS_BRANCH 
 	echo "Commit and push done!"
-	printf "----------------------------------------------------------------------\n"
+	echo "----------------------------------------------------------------------"
+	echo
 }
 
 
