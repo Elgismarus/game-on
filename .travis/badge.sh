@@ -6,6 +6,7 @@ set -e
 # Script to update the badge in README.md
 update_badge(){
 
+	echo "----------------------- UPDATE BADGE -----------------------"
 	# Should only be here if different branch
 	echo "Attempting to update badges in README.md from ${PWD} ..."
 
@@ -22,11 +23,11 @@ update_badge(){
 	done
 
 	echo "Badges link updated!"
-	exit 0
+	echo "------------------------------------------------------------"
 }
 
 commit_and_push(){
-	
+	echo "--------------------- COMMIT AND PUSH ----------------------"
 	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 	git add ${FILES}
@@ -34,22 +35,9 @@ commit_and_push(){
 	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
 	git push --quiet --set-upstream origin $TRAVIS_BRANCH 
 	echo "Commit and push done!"
+	echo "------------------------------------------------------------"
 }
 
-get_travis_info(){
-	echo "User name: "$USER
-	echo "---Git info----"
-	git config user.name
-	git config user.email
-	echo "Repo name: "$TRAVIS_REPO_SLUG
-	echo "---------------"
-	echo "--- ls file ---"
-	ls
-	echo "---------------"
-}
-
-echo "Get Travis info"
-get_travis_info
 
 # Retrieve branch name from badge
 GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' README.md | awk -F'[=&]' '{print $2}')
