@@ -44,6 +44,15 @@ commit_and_push(){
 	echo "Commit and push done!"
 }
 
+get_travis_info(){
+	echo $USER
+	git config user.name
+	git config user.email
+	ls
+}
+
+echo "Get Travis info"
+
 # Retrieve branch name from badge
 GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' README.md | awk -F'[=&]' '{print $2}')
 
@@ -56,4 +65,5 @@ else
 	upload_repo
 	update_badge
 	commit_and_push
+	exit 0
 fi

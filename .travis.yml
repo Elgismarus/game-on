@@ -10,9 +10,6 @@ env:
 language: node_js
 node_js:
   - "9.3.0"
-before_install:
-  - git config user.email ${TRAVIS_EMAIL}
-  - git config user.name ${TRAVIS_USER}
 before_script:
   - npm run code:analysis
 script:
