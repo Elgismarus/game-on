@@ -11,7 +11,7 @@ update_badge(){
 	echo "Attempting to update badges in ${FILES} from ${PWD} ..."
 
 	# Get all the links
-	GAMEON_FILE_LINKS=$(grep https README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
+	GAMEON_FILE_LINKS=$(grep https $FILES | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
 
 	# Loop through the links
 	for link in $GAMEON_FILE_LINKS
@@ -19,7 +19,7 @@ update_badge(){
 		# Change branch link
 		temp=$(sed "s/branch=\(.*\)/branch=$TRAVIS_BRANCH/g" <<< $link)
 		echo "Changing link from ${link} to ${temp}"
-		sed -i "s,${link},${temp},g" README.md
+		sed -i "s,${link},${temp},g ${FILES}" 
 	done
 
 	echo "Badges link updated!"
@@ -29,7 +29,7 @@ update_badge(){
 
 commit_and_push(){
 	echo "-------------------------- COMMIT AND PUSH ---------------------------"
-	echo "Commit and pushing %s from %s ..." "${FILES}" "${PWD}"
+	echo "Commit and pushing ${FILES} from ${PWD} ..."
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 	git add $FILES
 	git commit -m "[ci skip] ${MESSAGE}"
@@ -49,7 +49,7 @@ if [ "$GAMEON_FILE_BRANCH" == "$TRAVIS_BRANCH" ]; then
 	echo "Same branch - Skipping badge update!"
 	exit 0
 else
-	echo "Update require for %s required." "$FILES"
+	echo "Update require for ${FILES} required."
 	update_badge
 	commit_and_push
 	exit 0
