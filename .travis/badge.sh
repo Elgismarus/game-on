@@ -8,7 +8,7 @@ update_badge(){
 
 	# Should only be here if different branch
 	echo "Attempting to update badges in README.md from ${PWD} ..."
-	
+
 	# Get all the links
 	GAMEON_FILE_LINKS=$(grep https README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
 	echo $GAMEON_FILE_LINKS
@@ -30,8 +30,8 @@ commit_and_push(){
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
 	git add ${FILES}
 	git commit -m "[ci skip]" ${MESSAGE}
-	git remote add origin "https://${GITHUB_TOKEN}@${GITHUB_REPO}" > /dev/null 2>&1
-	git push --quiet --set-upstream origin TRAVIS_BRANCH 
+	#git remote add origin "https://${GITHUB_TOKEN}@${GITHUB_REPO}" > /dev/null 2>&1
+	#git push --quiet --set-upstream origin $TRAVIS_BRANCH 
 	echo "Commit and push done!"
 }
 
@@ -40,6 +40,7 @@ get_travis_info(){
 	echo "---Git info----"
 	git config user.name
 	git config user.email
+	echo "Repo name: "$TRAVIS_REPO_SLUG
 	echo "---------------"
 	echo "--- ls file ---"
 	ls
