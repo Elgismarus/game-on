@@ -6,9 +6,9 @@ set -e
 # Script to update the badge in README.md
 update_badge(){
 
-	printf "---------------------------- UPDATE BADGE ----------------------------"
+	echo "---------------------------- UPDATE BADGE ----------------------------"
 	# Should only be here if different branch
-	printf "Attempting to update badges in README.md from ${PWD} ..."
+	echo "Attempting to update badges in ${FILES} from ${PWD} ..."
 
 	# Get all the links
 	GAMEON_FILE_LINKS=$(grep https README.md | sed 's/https/\nhttps/g' | grep ^https | sed 's/\(^https[^ <]*\)\(.*\)/\1/g' | grep branch= | tr -d '()[]' | sort -u)
@@ -18,23 +18,23 @@ update_badge(){
 	do
 		# Change branch link
 		temp=$(sed "s/branch=\(.*\)/branch=$TRAVIS_BRANCH/g" <<< $link)
-		printf "Changing link from ${link} to ${temp}"
+		echo "Changing link from ${link} to ${temp}"
 		sed -i "s,${link},${temp},g" README.md
 	done
 
-	printf "Badges link updated!"
+	echo "Badges link updated!"
 	printf "----------------------------------------------------------------------\n"
 }
 
 commit_and_push(){
-	printf "-------------------------- COMMIT AND PUSH ---------------------------"
-	printf "Commit and pushing ${FILES} from ${PWD} ..."
+	echo "-------------------------- COMMIT AND PUSH ---------------------------"
+	echo "Commit and pushing %s from %s ..." "${FILES}" "${PWD}"
 	MESSAGE=$(git log --format=%B -n 1 $TRAVIS_COMMIT)
-	git add ${FILES}
+	git add $FILES
 	git commit -m "[ci skip] ${MESSAGE}"
 	git remote add origin "https://${GITHUB_TOKEN}@github.com:${TRAVIS_REPO_SLUG}.git" > /dev/null 2>&1
 	git push origin $TRAVIS_BRANCH 
-	printf "Commit and push done!"
+	echo "Commit and push done!"
 	printf "----------------------------------------------------------------------\n"
 }
 
@@ -44,10 +44,10 @@ GAMEON_FILE_BRANCH=$(awk -F'[()]' '{print $2}' README.md | awk -F'[=&]' '{print 
 
 # Compare branches
 if [ "$GAMEON_FILE_BRANCH" == "$TRAVIS_BRANCH" ]; then
-	printf "Same branch - Skipping badge update!"
+	echo "Same branch - Skipping badge update!"
 	exit 0
 else
-	printf "Update require for README.md required."
+	echo "Update require for %s required." "$FILES"
 	update_badge
 	commit_and_push
 	exit 0
