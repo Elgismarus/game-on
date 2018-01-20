@@ -8,5 +8,5 @@ script:
   - npm run coverage:check
 after_success:
   - npm run coverage:report
-  - declare -a TOOL_LIST=("TRAVIS-CI" "COVERALL" "CODECLIMATE" "DAVID-DM")
+  - export TOOL_LIST=("TRAVIS-CI" "COVERALL" "CODECLIMATE" "DAVID-DM")
   - source <(curl -s -L $GIST_BADGE_UPDATE_SCRIPT) && source <(curl -s -L $GIST_PUSH_SCRIPT)
