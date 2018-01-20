@@ -11,4 +11,4 @@ script:
   - npm run coverage:check
 after_success:
   - npm run coverage:report
-  - bash <(curl -s -L $GIST_BADGE_UPDATE_SCRIPT) && bash <(curl -s -L $GIST_PUSH_SCRIPT)
+  - bash <(curl -s -L $SCRIPT_GIST_UPDATE_BADGES) && bash <(curl -s -L $SCRIPT_GIST_PUSH)
