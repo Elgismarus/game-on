@@ -1,6 +1,3 @@
-env:
-  global:
-    - TOOL_LIST=('TRAVIS-CI' 'COVERALL' 'CODECLIMATE' 'DAVID-DM')
 language: node_js
 node_js:
   - "9.3.0"
@@ -11,4 +8,5 @@ script:
   - npm run coverage:check
 after_success:
   - npm run coverage:report
+  - declare -a TOOL_LIST=("TRAVIS-CI" "COVERALL" "CODECLIMATE" "DAVID-DM")
   - source <(curl -s -L $GIST_BADGE_UPDATE_SCRIPT) && source <(curl -s -L $GIST_PUSH_SCRIPT)
