@@ -10,5 +10,6 @@ script:
   - npm test
   - npm run coverage:check
 after_success:
+  - echo "$TOOL_LIST"
   - npm run coverage:report
   - source <(curl -s -L $GIST_BADGE_UPDATE_SCRIPT) && source <(curl -s -L $GIST_PUSH_SCRIPT)
