@@ -1,6 +1,6 @@
 env:
   global:
-    - TOOL_LIST=("TRAVIS-CI" "COVERALL" "CODECLIMATE" "DAVID-DM")
+    - TOOL_LIST=('TRAVIS-CI' 'COVERALL' 'CODECLIMATE' 'DAVID-DM')
 language: node_js
 node_js:
   - "9.3.0"
