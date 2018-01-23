@@ -1,11 +1,16 @@
+/* ***** JSHINT OPTIONS ***** */
+/*global Utils*/
 /*jslint browser: true */
 /*jslint quotmark: false */
+/******************************/
 'use strict';
 var view = {
 	chat: {
 		$msgBoard: $('#messages')
 	}
 };
+
+Utils.loadScript('Chat.loader');
 
 // TODO: Review user journey for notification
 /**
@@ -85,8 +90,8 @@ function addPlayerCanvas(playerName, num) {
 	ctx.strokeText(playerName, strokeArgs[0], strokeArgs[1]);
 }
 
-function clearTable(canvas){
-	if(canvas === undefined || canvas.tagName !== 'CANVAS'){
+function clearTable(canvas) {
+	if (canvas === undefined || canvas.tagName !== 'CANVAS') {
 		throw new Error('Canvas required');
 	}
 
@@ -137,23 +142,12 @@ $(function() {
 	 * Hook submit event to chat
 	 * Send message to board
 	 */
-	$('form#chat').on('submit',function() {
+	$('form#chat').on('submit', function() {
 		var chatmsg = $('input#name').val() + " said: " + $('#msg').val();
 		chatmsg = new Date().toLocaleTimeString() + ' - ' + chatmsg;
 		$('#msg').val('');
 		socket.emit('chat', chatmsg);
 		return false;
-	});
-
-
-	/**
-	 * Bind handler for event chat
-	 * Add message to message board and scroll down
-	 */
-	socket.on('chat', function(msg) {
-		let $msgBoard = view.chat.$msgBoard || $('#messages');
-		$msgBoard.append($('<li>').text(msg));
-		$msgBoard.scrollTop($msgBoard.get(0).scrollHeight);
 	});
 
 	/**
@@ -199,7 +193,7 @@ $(function() {
 		alert("Table is already full. Use the Clear button to start fresh.");
 	});
 
-	socket.on('clear_table', function(){
+	socket.on('clear_table', function() {
 		clearTable(document.getElementById('canvas1'));
 	});
 });

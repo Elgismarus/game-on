@@ -36,6 +36,9 @@ function getWindow() {
 	let win = browser.getWindow();
 	win.window = win;
 	win.document = browser.getDocument();
+	win.Utils = {
+		loadScript: function(){}
+	};
 	require('jquery')(win);
 	return browser.getWindow();
 }
@@ -482,73 +485,6 @@ describe('Global.js Unit Tests', () => {
 
 			killer.startWith(done);
 			ctx.$(chatform).trigger('submit');
-		});
-	});
-
-	describe('Chat Events', () => {
-
-		let ctx, server, chatform;
-
-		before('Set up socket server', () => {
-			server = new SocketIOMock();
-		});
-
-		before('Create a context', (done) => {
-			let win = getWindow();
-			win.io = function() {
-				return server.socketClient;
-			};
-			// win.console = {
-			// 	log: sinonbox.spy()
-			// };
-			win.console = console;
-			chatform = win.document.createElement('form');
-			chatform.id = chatform.name = 'chat';
-
-			let name = win.document.createElement('input');
-			name.id = name.name = 'name';
-			chatform.appendChild(name);
-
-			let msg = win.document.createElement('input');
-			msg.id = msg.name = 'msg';
-			chatform.appendChild(msg);
-
-			win.document.body.appendChild(chatform);
-
-			let msgBoard = win.document.createElement('ul');
-			msgBoard.id = 'messages';
-			win.document.body.appendChild(msgBoard);
-			ctx = createVMContext(MODULE_TESTED, win, MODULE_PATH, done);
-		});
-
-
-
-		it('should populate chat message on chat event', (done) => {
-			ctx.view.$msgBoard = ctx.$('#messages');
-			let spyAppend = sinonbox.spy(ctx.view.chat.$msgBoard, 'append');
-			let spyScrollTop = sinonbox.spy(ctx.view.chat.$msgBoard, 'scrollTop');
-
-			server.socketClient.once(ChatEventType.CHAT, () => {
-				killer.cancel();
-				spyAppend.should.have.been.called;
-				spyScrollTop.should.have.been.called;
-				done();
-			});
-
-			killer.startWith(done);
-			server.emit(ChatEventType.CHAT);
-		});
-
-		it('should fill view variable if not defined yet', (done) => {
-			assert.isUndefined(chatform.onsubmit);
-			ctx.view.chat.$msgBoard = null;
-			server.socketClient.once(ChatEventType.CHAT, () => {
-				killer.cancel();
-				done();
-			});
-
-			killer.startWith(done);
-			server.emit(ChatEventType.CHAT, 'Test message');
 		});
 	});
 
