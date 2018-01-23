@@ -87,7 +87,7 @@ var Utils = (function Utils() {
 		return new Promise((resolve, reject) => {
 			self.loadScript(module_name + '.loader')
 				.then(() => {
-					resolve();
+					resolve(window[module_name]);
 				}).catch(() => {
 					reject('Failed to load module ' + module_name + ': Ensure loader.js is in ' + module_name + ' folder.');
 				});

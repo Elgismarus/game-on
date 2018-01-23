@@ -108,33 +108,48 @@ describe('Utils BDD Tests', () => {
 
 	context('Load module', () => {
 
-		it('should call load script', () => {
-
+		beforeEach('Set up stubs', () => {
 			// Stub appendChild to get script
 			let stubAppend = sinon.stub(ctx.document.body, 'appendChild');
 			stubAppend.callsFake((elScript) => {
-				elScript.onload();
+				if (elScript.id === 'TestFailed.loader') {
+					elScript.onerror();
+				} else {
+					let arrParts = elScript.id.split('.');
+					// Mock creation of module variable
+					ctx[arrParts[0]] = {};
+					elScript.onload();
+				}
 			});
+		});
+
+		afterEach('Clean up stubs', () => {
+
+			if (typeof ctx.document.body.appendChild.restore === 'function') {
+				ctx.document.body.appendChild.restore();
+			}
+		});
+
+		it('should call load script', (done) => {
 
 			let spyLoadScript = sinon.spy(ctx.Utils, 'loadScript');
-			return ctx.Utils.loadModule('Test')
+			ctx.Utils.loadModule('Test')
 				.then(() => {
 					spyLoadScript.should.have.been.calledOnce;
 					spyLoadScript.should.have.been.calledWith('Test.loader');
 					// Cean up stub
-					ctx.document.body.appendChild.restore();
+					done();
+				}).catch(err => {
+					done(err);
 				});
 
 		});
 
 		it('should throw error if module failed to load', (done) => {
-			let stubAppend = sinon.stub(ctx.document.body, 'appendChild');
-			stubAppend.callsFake((elScript) => {
-				elScript.onerror();
-			});
 
-			ctx.Utils.loadModule('Test')
+			ctx.Utils.loadModule('TestFailed')
 				.then(() => {
+					ctx.document.body.appendChild.restore();
 					done(new Error('Should not have suceed.'));
 				}).catch(err => {
 					try {
@@ -144,6 +159,16 @@ describe('Utils BDD Tests', () => {
 						done(ex);
 					}
 				});
+		});
+
+		it('should return the module variable', () => {
+
+			return ctx.Utils.loadModule('Test')
+				.then(m => {
+					assert.isDefined(m);
+					assert.equal(m, ctx.Test);
+				});
+
 		});
 
 	});
