@@ -21,19 +21,19 @@ describe('Utils BDD Tests', () => {
 
 	context('Import JavaScript file', () => {
 
-		beforeEach('Stub appendChild', () =>{
+		beforeEach('Stub appendChild', () => {
 			/**
 			 * Stub as calling fake path script
 			 * and solving promise
 			 */
 			sinon.stub(ctx.document.body, 'appendChild')
-			.callsFake(elScript =>{
-				elScript.onerror = function(){};
-				ctx.document.head.appendChild(elScript);
-				elScript.onload(elScript);
-			});
-			
-			
+				.callsFake(elScript => {
+					elScript.onerror = function() {};
+					ctx.document.head.appendChild(elScript);
+					elScript.onload(elScript);
+				});
+
+
 		});
 
 		afterEach('Clean up scripts', () => {
@@ -49,11 +49,11 @@ describe('Utils BDD Tests', () => {
 
 			return ctx.Utils.loadScript('test')
 				.then((elScript) => {
-				
+
 					assert.equal(elScript.tagName, 'SCRIPT');
 					assert.equal(elScript.type, 'text/javascript');
 					assert.equal(elScript.src, '/js/test.js');
-				
+
 				});
 
 
@@ -77,31 +77,73 @@ describe('Utils BDD Tests', () => {
 						.then(() => {
 							ctx.document.body.appendChild.calledOnce;
 							done();
-						}).catch(err =>{
+						}).catch(err => {
 							done(err);
 						});
 
-				}).catch(err =>{
+				}).catch(err => {
 					done(err);
 				});
 
 		});
 
-		it('should load async by default', () =>{
-			
+		it('should load async by default', () => {
+
 			return ctx.Utils.loadScript('test.test')
-			.then(elScript =>{
-				assert.isTrue(elScript.async);
-			});
+				.then(elScript => {
+					assert.isTrue(elScript.async);
+				});
 
 		});
 
-		it('should allow loading async', () =>{
-			
+		it('should allow loading async', () => {
+
 			return ctx.Utils.loadScript('test2.test', false)
-			.then(elScript =>{
-				assert.isFalse(elScript.async);
+				.then(elScript => {
+					assert.isFalse(elScript.async);
+				});
+		});
+
+	});
+
+	context('Load module', () => {
+
+		it('should call load script', () => {
+
+			// Stub appendChild to get script
+			let stubAppend = sinon.stub(ctx.document.body, 'appendChild');
+			stubAppend.callsFake((elScript) => {
+				elScript.onload();
 			});
+
+			let spyLoadScript = sinon.spy(ctx.Utils, 'loadScript');
+			return ctx.Utils.loadModule('Test')
+				.then(() => {
+					spyLoadScript.should.have.been.calledOnce;
+					spyLoadScript.should.have.been.calledWith('Test.loader');
+					// Cean up stub
+					ctx.document.body.appendChild.restore();
+				});
+
+		});
+
+		it('should throw error if module failed to load', (done) => {
+			let stubAppend = sinon.stub(ctx.document.body, 'appendChild');
+			stubAppend.callsFake((elScript) => {
+				elScript.onerror();
+			});
+
+			ctx.Utils.loadModule('Test')
+				.then(() => {
+					done(new Error('Should not have suceed.'));
+				}).catch(err => {
+					try {
+						assert.isDefined(err);
+						done();
+					} catch (ex) {
+						done(ex);
+					}
+				});
 		});
 
 	});
@@ -137,7 +179,7 @@ describe('Utils BDD Tests', () => {
 
 	});
 
-		context('bind Socket IO', () => {
+	context('bind Socket IO', () => {
 
 		let mockServer, mockClient;
 		before('Set up socketIO', () => {
@@ -145,14 +187,14 @@ describe('Utils BDD Tests', () => {
 			mockClient = mockServer.socketClient;
 		});
 
-		it('should bind on & once', () =>{
+		it('should bind on & once', () => {
 
 			let spyOn = sinon.spy();
 			let spyOnce = sinon.spy();
 
 			let evtName = 'myevent';
 
-			let handlers ={};
+			let handlers = {};
 			handlers[evtName] = {
 				'on': spyOn,
 				'once': spyOnce
@@ -166,10 +208,10 @@ describe('Utils BDD Tests', () => {
 
 		});
 
-		it('should bind multiple handlers', () =>{
-			
+		it('should bind multiple handlers', () => {
+
 			let handlers = {
-				'firstevent':{
+				'firstevent': {
 					on: sinon.spy(),
 					once: sinon.spy()
 				},

@@ -10,6 +10,8 @@ var Utils = (function Utils() {
 
 	'use strict';
 
+	let self = {};
+
 	/**
 	 * Load a JavaScript script file dynamically 
 	 * 
@@ -63,6 +65,36 @@ var Utils = (function Utils() {
 	}
 
 	/**
+	 * Short way to load module script.
+	 * 
+	 * Load a loader.js located in the folder
+	 * of the module (module_name provided).
+	 *
+	 * e.g.: 
+	 * Suppose module Chat, the folder structure
+	 * should be as follow:
+	 *
+	 * - Chat (Folder - case sensitive)
+	 * -- loader.js
+	 * -- Other js files
+	 * 
+	 * @param  {string} module_name [Name of the module/folder]
+	 * @return {promise}
+	 * -> resolve if file loaded without any issue.
+	 * -> reject if failed loading file for any reason.
+	 */
+	function loadModule(module_name) {
+		return new Promise((resolve, reject) => {
+			self.loadScript(module_name + '.loader')
+				.then(() => {
+					resolve();
+				}).catch(() => {
+					reject('Failed to load module ' + module_name + ': Ensure loader.js is in ' + module_name + ' folder.');
+				});
+		});
+	}
+
+	/**
 	 * Register a namespace to specified or window
 	 *
 	 * Name with dot notation for nested namespace
@@ -106,9 +138,10 @@ var Utils = (function Utils() {
 
 	}
 
-	return {
+	return Object.assign(self, {
 		loadScript: loadScript,
+		loadModule: loadModule,
 		registerNameSpace: registerNameSpace,
 		subscribe: subscribe
-	};
+	});
 })();
