@@ -19,8 +19,10 @@ var Utils = (function Utils() {
 	 *
 	 * To pass a script inside folder, use dot notation:
 	 * e.g. Test/test.js => Test.test
-	 * 
-	 * @param  {string} dotpath [path in dot annotation]
+	 *
+	 * @param {string} dotpath		[path in dot annotation]
+	 * @param {boolean | function}	[Optional: async loading or callback before resolve]
+	 * @param {boolean}				[Optional: async]
 	 * @return {Promise}
 	 * -> onload when resolve
 	 * -> onerror when rejected
