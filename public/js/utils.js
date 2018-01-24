@@ -25,7 +25,19 @@ var Utils = (function Utils() {
 	 * -> onload when resolve
 	 * -> onerror when rejected
 	 */
-	function loadScript(dotpath, async = true) {
+	function loadScript() {
+
+		let dotpath = arguments['0'];
+		// Expect first argument to be path
+		if (typeof dotpath !== 'string') {
+			return Promise.reject('Please provide a valid path.');
+		}
+
+		let fn = (typeof arguments['1'] === 'function') ?
+			arguments['1'] : undefined;
+
+		let async = (typeof arguments['1'] === 'boolean') ?
+		arguments['1']: arguments['2'] || true;
 
 		// Prevent to load script twice
 		// Only based on id
@@ -37,60 +49,25 @@ var Utils = (function Utils() {
 
 			let oScript = document.createElement('script');
 			oScript.id = dotpath;
-
-			/**
-			 * If name composed of dot
-			 * meaning file is in folders
-			 */
-			let arrNames = dotpath.split('.');
-			if (arrNames.length > 1) {
-				dotpath = '';
-				arrNames.forEach((f, idx, array) => {
-					dotpath += f;
-					if (idx !== (array.length - 1)) {
-						dotpath += '/';
-					}
-				});
-			}
+			let scriptPath = dotpath.replace('.', '/');
 
 			oScript.type = 'text/javascript';
-			oScript.src = '/js/' + dotpath + '.js';
+			oScript.src = '/js/' + scriptPath + '.js';
 			oScript.async = async;
 			oScript.onerror = reject;
-			oScript.onload = resolve;
+			oScript.onload = function onScriptLoad() {
+
+				if (typeof fn === 'function') {
+					let length = Object.keys(arguments).length;
+					arguments[length] = resolve;
+					fn.apply(fn, arguments);
+				} else {
+					resolve.apply(resolve, arguments);
+				}
+			};
 
 			document.body.appendChild(oScript);
 
-		});
-	}
-
-	/**
-	 * Short way to load module script.
-	 * 
-	 * Load a loader.js located in the folder
-	 * of the module (module_name provided).
-	 *
-	 * e.g.: 
-	 * Suppose module Chat, the folder structure
-	 * should be as follow:
-	 *
-	 * - Chat (Folder - case sensitive)
-	 * -- loader.js
-	 * -- Other js files
-	 * 
-	 * @param  {string} module_name [Name of the module/folder]
-	 * @return {promise}
-	 * -> resolve if file loaded without any issue.
-	 * -> reject if failed loading file for any reason.
-	 */
-	function loadModule(module_name) {
-		return new Promise((resolve, reject) => {
-			self.loadScript(module_name + '.loader')
-				.then(() => {
-					resolve(window[module_name]);
-				}).catch(() => {
-					reject('Failed to load module ' + module_name + ': Ensure loader.js is in ' + module_name + ' folder.');
-				});
 		});
 	}
 
@@ -140,7 +117,6 @@ var Utils = (function Utils() {
 
 	return Object.assign(self, {
 		loadScript: loadScript,
-		loadModule: loadModule,
 		registerNameSpace: registerNameSpace,
 		subscribe: subscribe
 	});

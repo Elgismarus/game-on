@@ -29,7 +29,6 @@ describe('Utils BDD Tests', () => {
 			sinon.stub(ctx.document.body, 'appendChild')
 				.callsFake(elScript => {
 					elScript.onerror = function() {};
-					ctx.document.head.appendChild(elScript);
 					elScript.onload(elScript);
 				});
 
@@ -42,6 +41,17 @@ describe('Utils BDD Tests', () => {
 			for (let i = 0; i < scripts.length; i++) {
 				scripts[i].remove();
 			}
+
+		});
+
+		it('should reject if dot path different then string', (done) => {
+
+			ctx.Utils.loadScript({})
+				.then(() => {
+					assert.fail('Parameter should have been a string.');
+				}).catch(() => {
+					done();
+				});
 
 		});
 
@@ -71,20 +81,53 @@ describe('Utils BDD Tests', () => {
 
 		it('should not load script twice', (done) => {
 
-			ctx.Utils.loadScript('test2.test')
-				.then(() => {
-					ctx.Utils.loadScript('test2.test')
-						.then(() => {
-							ctx.document.body.appendChild.calledOnce;
-							done();
-						}).catch(err => {
-							done(err);
-						});
+			// Restore from stub before testing.
+			ctx.document.body.appendChild.restore();
 
-				}).catch(err => {
+			// Add fake script with same name as test
+			let fakeScript = ctx.document.createElement('script');
+			fakeScript.id = 'test2.test';
+			fakeScript.src= 'fake.js';
+
+			/**
+			 * Bind to onload/onerror
+			 * since test is made of non existing path
+			 * change are that onerror is called.
+			 * It doesn't matter in the test
+			 * as long as the script element
+			 * has been added to the DOM.
+			 */
+			fakeScript.onload = fakeScript.onerror = function fakeloader() {
+				ctx.Utils.loadScript(fakeScript.id)
+					.then(() => {
+						// should contains only one script
+						assert.equal(
+							ctx.document.getElementsByTagName('SCRIPT').length,
+							1
+						);
+						done();
+					}).catch(err => {
+						done(err);
+					});
+
+			};
+
+			ctx.document.head.appendChild(fakeScript);
+
+
+		});
+
+		it('should allow binding before resolving', (done) => {
+
+			let fn = function() {
+				// Test pass if call here.
+				done();
+			};
+
+			ctx.Utils.loadScript('test1.test', fn)
+				.catch(err => {
 					done(err);
 				});
-
 		});
 
 		it('should load async by default', () => {
@@ -102,73 +145,6 @@ describe('Utils BDD Tests', () => {
 				.then(elScript => {
 					assert.isFalse(elScript.async);
 				});
-		});
-
-	});
-
-	context('Load module', () => {
-
-		beforeEach('Set up stubs', () => {
-			// Stub appendChild to get script
-			let stubAppend = sinon.stub(ctx.document.body, 'appendChild');
-			stubAppend.callsFake((elScript) => {
-				if (elScript.id === 'TestFailed.loader') {
-					elScript.onerror();
-				} else {
-					let arrParts = elScript.id.split('.');
-					// Mock creation of module variable
-					ctx[arrParts[0]] = {};
-					elScript.onload();
-				}
-			});
-		});
-
-		afterEach('Clean up stubs', () => {
-
-			if (typeof ctx.document.body.appendChild.restore === 'function') {
-				ctx.document.body.appendChild.restore();
-			}
-		});
-
-		it('should call load script', (done) => {
-
-			let spyLoadScript = sinon.spy(ctx.Utils, 'loadScript');
-			ctx.Utils.loadModule('Test')
-				.then(() => {
-					spyLoadScript.should.have.been.calledOnce;
-					spyLoadScript.should.have.been.calledWith('Test.loader');
-					// Cean up stub
-					done();
-				}).catch(err => {
-					done(err);
-				});
-
-		});
-
-		it('should throw error if module failed to load', (done) => {
-
-			ctx.Utils.loadModule('TestFailed')
-				.then(() => {
-					ctx.document.body.appendChild.restore();
-					done(new Error('Should not have suceed.'));
-				}).catch(err => {
-					try {
-						assert.isDefined(err);
-						done();
-					} catch (ex) {
-						done(ex);
-					}
-				});
-		});
-
-		it('should return the module variable', () => {
-
-			return ctx.Utils.loadModule('Test')
-				.then(m => {
-					assert.isDefined(m);
-					assert.equal(m, ctx.Test);
-				});
-
 		});
 
 	});
